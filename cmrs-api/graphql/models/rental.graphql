@@ -1,0 +1,64 @@
+extend type Query {
+    rentals: [Rental!]!  @paginate
+    rental(id: ID @eq): Rental @find
+}
+
+extend type Mutation {
+    createRental(input: RentalInput! @spread): Rental!
+        @field(resolver: "App\\GraphQL\\Mutations\\CreateRental")
+    updateRental(id: ID!, input: RentalInput! @spread): Rental
+        @update
+    deleteRental(id: ID!): Rental
+        @delete
+}
+
+enum RentalStatus {
+  AVAILABLE
+  RENTED_OUT
+}
+
+type Rental {
+    id: ID!
+    name: String!
+    description: String!
+    phone: String!
+    price: Float!
+    status: MachinerySaleStatus!
+    address: Address!
+    _geo: Geo!
+    images: [String!]
+    created_at: DateTime!
+    updated_at: DateTime!
+
+    equipment: [Equipment]! @belongsTo
+    user: [User]! @belongsTo
+}
+
+input RentalInput {
+    name: String! @rules(apply: ["required"])
+    description: String! @rules(apply: ["required"])
+    price: Float! @rules(apply: ["required"])
+    status: RentalStatus! @rules(apply: ["required"])
+    phone: String! @rules(apply: ["required"])
+    region: String
+    woreda: String
+    city: String
+    lat: Float,
+    lng: Float,
+    images: [Upload],
+    equipment: CreateEquipmentBelongsTo!
+    user: CreateUserBelongsTo!
+    pricing_type: CreatePriceTypeBelongsTo!
+}
+
+input CreateEquipmentBelongsTo {
+    connect: ID!
+}
+
+input CreateUserBelongsTo {
+    connect: ID!
+}
+
+input CreatePriceTypeBelongsTo {
+    connect: ID!
+}
