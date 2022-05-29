@@ -1,0 +1,57 @@
+extend type Query {
+    machinery_sales: [MachinerySale!]!  @paginate
+    machinery_sale(id: ID @eq): MachinerySale @find
+}
+
+extend type Mutation {
+    createMachinerySale(input: MachinerySaleInput! @spread): MachinerySale!
+        @field(resolver: "App\\GraphQL\\Mutations\\CreateMachinerySale")
+    updateMachinerySale(id: ID!, input: MachinerySaleInput! @spread): MachinerySale
+        @update
+    deleteMachinerySale(id: ID!): MachinerySale
+        @delete
+}
+
+enum MachinerySaleStatus {
+  IN_STOCK
+  SOLD_OUT
+}
+
+type MachinerySale {
+    id: ID!
+    name: String!
+    description: String!
+    phone: String!
+    price: Float!
+    status: MachinerySaleStatus!
+    address: Address
+    images: [String!]
+    created_at: DateTime!
+    updated_at: DateTime!
+
+    equipment: [Equipment]! @belongsTo
+    user: [User]! @belongsTo
+}
+
+input MachinerySaleInput {
+    name: String! @rules(apply: ["required"])
+    description: String! @rules(apply: ["required"])
+    price: Float! @rules(apply: ["required"])
+    phone: String! @rules(apply: ["required"])
+    status: MachinerySaleStatus! @rules(apply: ["required"])
+    region: String
+    woreda: String
+    city: String
+    images: [Upload]
+    equipment: CreateEquipmentBelongsTo!
+    user: CreateUserBelongsTo!
+}
+
+input CreateEquipmentBelongsTo {
+    connect: ID!
+}
+
+input CreateUserBelongsTo {
+    connect: ID!
+}
+
