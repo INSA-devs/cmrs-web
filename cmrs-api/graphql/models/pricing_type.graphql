@@ -1,0 +1,26 @@
+extend type Query {
+    pricing_types: [PricingType!]!  @all
+    pricing_type(id: ID @eq): PricingType @find
+}
+
+extend type Mutation {
+    createPricingType(input: PricingTypeInput! @spread): PricingType!
+        @create
+    updatePricingType(id: ID!, input: PricingTypeInput! @spread): PricingType
+        @update
+    deletePricingType(id: ID!): PricingType
+        @delete
+}
+
+type PricingType {
+    id: ID!
+    label: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+
+    rentals: [Rental]! @hasMany
+}
+
+input PricingTypeInput {
+    label: String! @rules(apply: ["required"])
+}
