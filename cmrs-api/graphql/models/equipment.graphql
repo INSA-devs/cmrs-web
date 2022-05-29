@@ -1,0 +1,27 @@
+extend type Query {
+    equipments: [Equipment!]!  @paginate
+    equipment(id: ID @eq): Equipment @find
+}
+
+extend type Mutation {
+    createEquipment(input: EquipmentInput! @spread): Equipment!
+        @create
+    updateEquipment(id: ID!, input: EquipmentInput! @spread): Equipment
+        @update
+    deleteEquipment(id: ID!): Equipment
+        @delete
+}
+
+type Equipment {
+    id: ID!
+    name: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+
+    machinerySale: [MachinerySale] @hasMany
+    machinerySale: [Rental] @hasMany
+}
+
+input EquipmentInput {
+    name: String! @rules(apply: ["required"])
+}
